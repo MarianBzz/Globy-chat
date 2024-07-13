@@ -1,3 +1,4 @@
+import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
 const Btn = ({
@@ -23,7 +24,14 @@ const Btn = ({
         marginVertical: 10,
       }}
     >
-      <Text style={{ color: textColor, fontSize: 22, fontWeight: 'bold' }}>
+      <Text
+        style={{
+          color: textColor,
+          fontSize: 22,
+          fontWeight: 'bold',
+          fontFamily: 'ProximaNova-Bold',
+        }}
+      >
         {btnLabel}
       </Text>
     </TouchableOpacity>

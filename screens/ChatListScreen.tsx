@@ -71,15 +71,16 @@ type ChatListScreenNavigationProp = StackNavigationProp<
 const ChatListScreen: React.FC = () => {
   const [search, setSearch] = useState('');
   const [filteredChats, setFilteredChats] = useState<Chat[]>(chats);
+  const [hasResults, setHasResults] = useState(true);
   const navigation = useNavigation<ChatListScreenNavigationProp>();
 
   const handleSearch = (text: string) => {
     setSearch(text);
-    setFilteredChats(
-      chats.filter((chat) =>
-        chat.contact.toLowerCase().includes(text.toLowerCase())
-      )
+    const filtered = chats.filter((chat) =>
+      chat.contact.toLowerCase().includes(text.toLowerCase())
     );
+    setFilteredChats(filtered);
+    setHasResults(filtered.length > 0);
   };
 
   const getLastMessage = (messages: Message[]): Message => {
@@ -106,7 +107,12 @@ const ChatListScreen: React.FC = () => {
           resizeMode='cover'
         />
         <Text style={styles.headerTitle}>Globy Chat</Text>
-        <Image source={require('../assets/messi.jpg')} style={styles.profile} />
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Image
+            source={require('../assets/messi.jpg')}
+            style={styles.profile}
+          />
+        </TouchableOpacity>
       </View>
       <View style={styles.body}>
         <Text style={styles.bodyTitle}>Mensajes</Text>
@@ -117,38 +123,44 @@ const ChatListScreen: React.FC = () => {
         value={search}
         onChangeText={handleSearch}
       />
-      <FlatList
-        data={sortedChats}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => {
-          const lastMessage = getLastMessage(item.messages);
-          return (
-            <TouchableOpacity
-              style={styles.messageContainer}
-              onPress={() =>
-                navigation.navigate('Chat', {
-                  contact: item.contact,
-                  messages: item.messages,
-                })
-              }
-            >
-              <View style={styles.messageIconContainer}>
-                <Image
-                  source={require('../assets/messi.jpg')}
-                  style={styles.profile}
-                />
-              </View>
-              <View style={styles.messageContent}>
-                <Text style={styles.messageTitle}>{item.contact}</Text>
-                <Text style={styles.messageDescription}>
-                  {lastMessage.content}
-                </Text>
-              </View>
-              <Text style={styles.messageTime}>{lastMessage.time}</Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
+      {sortedChats.length === 0 && !hasResults ? (
+        <View style={styles.noResultsContainer}>
+          <Text style={styles.noResultsText}>Sin Resultados</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={sortedChats}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
+            const lastMessage = getLastMessage(item.messages);
+            return (
+              <TouchableOpacity
+                style={styles.messageContainer}
+                onPress={() =>
+                  navigation.navigate('Chat', {
+                    contact: item.contact,
+                    messages: item.messages,
+                  })
+                }
+              >
+                <View style={styles.messageIconContainer}>
+                  <Image
+                    source={require('../assets/messi.jpg')}
+                    style={styles.profile}
+                  />
+                </View>
+                <View style={styles.messageContent}>
+                  <Text style={styles.messageTitle}>{item.contact}</Text>
+                  <Text style={styles.messageDescription}>
+                    {lastMessage.content}
+                  </Text>
+                </View>
+                <Text style={styles.messageTime}>{lastMessage.time}</Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -179,10 +191,10 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
     color: '#2980b9',
     marginLeft: 10,
     marginRight: 'auto',
+    fontFamily: 'ProximaNova-Bold',
   },
   profile: {
     width: 60,
@@ -200,7 +212,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 18,
     paddingLeft: 10,
-    fontWeight: 'bold',
+    fontFamily: 'ProximaNova-Bold',
     marginTop: 8,
   },
   searchInput: {
@@ -230,13 +242,25 @@ const styles = StyleSheet.create({
   messageTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'ProximaNova-Bold',
   },
   messageDescription: {
+    fontFamily: 'ProximaNova-Regular',
     color: '#666',
   },
   messageTime: {
     color: '#4CAF50',
     marginLeft: 8,
+    fontFamily: 'ProximaNova-Regular',
+  },
+  noResultsContainer: {
+    flex: 1,
+    paddingTop: 20,
+    alignItems: 'center',
+  },
+  noResultsText: {
+    fontFamily: 'ProximaNova-Bold',
+    fontSize: 18,
   },
 });
 

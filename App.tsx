@@ -1,3 +1,4 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,10 +9,19 @@ import ChatScreen from './screens/ChatScreen';
 import { RootStackParamList } from './types';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import InitialScreen from './screens/InitialScreen';
+import { useFonts } from 'expo-font';
+import { Text } from 'react-native';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    'ProximaNova-Regular': require('./assets/fonts/ProximaNova-Regular.ttf'),
+    'ProximaNova-Bold': require('./assets/fonts/ProximaNova-Bold.ttf'),
+  });
+  if (!fontsLoaded) {
+    return <Text>Loading...</Text>;
+  }
   return (
     <SafeAreaProvider>
       <NavigationContainer>

@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "globy-text",
-    "slug": "globy-text",
+    "name": "globy-chat",
+    "slug": "globy-chat",
     "version": "1.0.0",
+    "assets": ["./assets/fonts/"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,6 +23,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ]
   }
 }

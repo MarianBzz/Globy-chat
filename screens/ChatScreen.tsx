@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontFamily: 'ProximaNova-Bold',
     color: '#2c3e50',
   },
   messageContainer: {
@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
+    fontFamily: 'ProximaNova-Regular',
   },
   messageTime: {
     fontSize: 10,

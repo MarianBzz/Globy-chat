@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import Background from '../components/Background';
@@ -64,96 +73,121 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <Background>
-      <View style={{ alignItems: 'center', width: 460, paddingVertical: 70 }}>
-        <Image
-          source={require('../assets/fondo-2.png')}
-          style={{ borderRadius: 12, position: 'absolute' }}
-          resizeMode='repeat'
-        />
-        <Image
-          source={require('../assets/logo.png')}
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 10,
-            marginBottom: 30,
-          }}
-        />
-        <View
-          style={{
-            backgroundColor: 'white',
-            height: 700,
-            width: 460,
-            borderTopLeftRadius: 130,
-            paddingTop: 60,
-            alignItems: 'center',
-          }}
-        >
-          <Text
-            style={{
-              color: '#2c3e50',
-              fontSize: 28,
-              fontWeight: 'bold',
-              marginBottom: 20,
-            }}
-          >
-            Inicia sesión en tu cuenta
-          </Text>
-          <Field
-            placeholder='Email / Nombre de usuario'
-            onChangeText={handleUsernameChange}
-            value={username}
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior='padding'
+        keyboardVerticalOffset={Platform.select({ ios: 50, android: 30 })}
+      >
+        <View style={styles.innerContainer}>
+          <Image
+            source={require('../assets/fondo-2.png')}
+            style={styles.backgroundImage}
+            resizeMode='repeat'
           />
-          <Field
-            placeholder='Contraseña'
-            secureTextEntry={true}
-            onChangeText={handlePasswordChange}
-            value={password}
-          />
-          <View
-            style={{
-              alignItems: 'flex-end',
-              width: '78%',
-              paddingRight: 16,
-              marginBottom: 160,
-            }}
-          >
-            <TouchableOpacity onPress={showForgotPasswordAlert}>
-              <Text
-                style={{ color: '#2c3e50', fontWeight: 'bold', fontSize: 16 }}
-              >
-                ¿Olvidaste tu contraseña?
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <Btn
-            textColor='white'
-            bgColor={'#2c3e50'}
-            btnLabel='Iniciar Sesión'
-            Press={handleLogin}
-          />
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-              ¿No tienes una cuenta?{' '}
-            </Text>
-            <TouchableOpacity onPress={showSignUpAlert}>
-              <Text
-                style={{ color: '#2c3e50', fontWeight: 'bold', fontSize: 16 }}
-              >
-                Registrarse
-              </Text>
-            </TouchableOpacity>
+          <Image source={require('../assets/logo.png')} style={styles.logo} />
+          <View style={styles.loginContainer}>
+            <Text style={styles.title}>Inicia sesión en tu cuenta</Text>
+            <Field
+              placeholder='Email / Nombre de usuario'
+              onChangeText={handleUsernameChange}
+              value={username}
+            />
+            <Field
+              placeholder='Contraseña'
+              secureTextEntry={true}
+              onChangeText={handlePasswordChange}
+              value={password}
+            />
+            <View style={styles.forgotPasswordContainer}>
+              <TouchableOpacity onPress={showForgotPasswordAlert}>
+                <Text style={styles.forgotPasswordText}>
+                  ¿Olvidaste tu contraseña?
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <Btn
+              textColor='white'
+              bgColor={'#2c3e50'}
+              btnLabel='Iniciar Sesión'
+              Press={handleLogin}
+            />
+            <View style={styles.signUpContainer}>
+              <Text style={styles.signUpText}>¿No tienes una cuenta? </Text>
+              <TouchableOpacity onPress={showSignUpAlert}>
+                <Text style={styles.signUpLink}>Registrarse</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Background>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 180,
+  },
+  innerContainer: {
+    alignItems: 'center',
+    width: 460,
+    paddingVertical: 70,
+  },
+  backgroundImage: {
+    borderRadius: 12,
+    position: 'absolute',
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    marginBottom: 30,
+  },
+  loginContainer: {
+    backgroundColor: 'white',
+    height: 700,
+    width: 460,
+    borderTopLeftRadius: 130,
+    paddingTop: 60,
+    alignItems: 'center',
+  },
+  title: {
+    color: '#2c3e50',
+    fontSize: 28,
+    fontFamily: 'ProximaNova-Bold',
+    marginBottom: 20,
+  },
+  forgotPasswordContainer: {
+    alignItems: 'flex-end',
+    width: '78%',
+    paddingRight: 16,
+    marginBottom: 120,
+  },
+  forgotPasswordText: {
+    color: '#2c3e50',
+    fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: 'ProximaNova-Bold',
+  },
+  signUpContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  signUpText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontFamily: 'ProximaNova-Bold',
+  },
+  signUpLink: {
+    color: '#2c3e50',
+    fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: 'ProximaNova-Bold',
+  },
+});
 
 export default LoginScreen;
