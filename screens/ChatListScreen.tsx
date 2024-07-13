@@ -8,32 +8,70 @@ import {
   StyleSheet,
   TextInput,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types';
 
-// Datos mock
-const chats = [
+interface Message {
+  sender: string;
+  content: string;
+  time: string;
+}
+
+interface Chat {
+  id: number;
+  contact: string;
+  messages: Message[];
+}
+
+const chats: Chat[] = [
   {
     id: 1,
     contact: 'John',
-    lastMessage: 'Hey, how are you?',
-    lastMessageTime: '10:00 AM',
+    messages: [
+      { sender: 'John', content: 'Hey, how are you?', time: '10:00 AM' },
+      { sender: 'You', content: 'I am good, thanks!', time: '10:05 AM' },
+    ],
   },
   {
     id: 2,
     contact: 'Maria',
-    lastMessage: 'Do you want to go out tonight?',
-    lastMessageTime: 'yesterday',
+    messages: [
+      {
+        sender: 'Maria',
+        content: 'Do you want to go out tonight?',
+        time: 'yesterday',
+      },
+      { sender: 'You', content: 'Sure, where to?', time: 'yesterday' },
+    ],
   },
   {
     id: 3,
     contact: 'Peter',
-    lastMessage: "I'll be late for the meeting",
-    lastMessageTime: '2 hours ago',
+    messages: [
+      {
+        sender: 'Peter',
+        content: "I'll be late for the meeting",
+        time: '2 hours ago',
+      },
+      {
+        sender: 'You',
+        content: 'Noted, thanks for letting me know.',
+        time: '1 hour ago',
+      },
+    ],
   },
 ];
 
-const ChatListScreen = () => {
+type ChatListScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ChatList'
+>;
+
+const ChatListScreen: React.FC = () => {
   const [search, setSearch] = useState('');
-  const [filteredChats, setFilteredChats] = useState(chats);
+  const [filteredChats, setFilteredChats] = useState<Chat[]>(chats);
+  const navigation = useNavigation<ChatListScreenNavigationProp>();
 
   const handleSearch = (text: string) => {
     setSearch(text);
@@ -44,62 +82,72 @@ const ChatListScreen = () => {
     );
   };
 
+  const getLastMessage = (messages: Message[]): Message => {
+    return messages[messages.length - 1];
+  };
+
+  const sortedChats = [...filteredChats].sort(
+    (a, b) =>
+      new Date(getLastMessage(b.messages).time).getTime() -
+      new Date(getLastMessage(a.messages).time).getTime()
+  );
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          height: 120,
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-          paddingTop: 45,
-          flexDirection: 'row',
-          paddingHorizontal: 15,
-        }}
-      >
+      <View style={styles.header}>
         <Image
           source={require('../assets/initial-background.jpg')}
-          style={{ borderRadius: 12, position: 'absolute' }}
+          style={styles.headerBackground}
           resizeMode='cover'
         />
         <Image
-          source={require('..//assets/logo-removebg.png')}
+          source={require('../assets/logo-removebg.png')}
           style={styles.logo}
           resizeMode='cover'
         />
-        <Image
-          source={require('..//assets/messi.jpg')}
-          style={styles.profile}
-        />
+        <Text style={styles.headerTitle}>Globy Chat</Text>
+        <Image source={require('../assets/messi.jpg')} style={styles.profile} />
       </View>
       <View style={styles.body}>
         <Text style={styles.bodyTitle}>Mensajes</Text>
       </View>
       <TextInput
         style={styles.searchInput}
-        placeholder='Buscar'
+        placeholder='¿A quién quieres escribir?'
         value={search}
         onChangeText={handleSearch}
       />
       <FlatList
-        data={filteredChats}
+        data={sortedChats}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.messageContainer}>
-            <View style={styles.messageIconContainer}>
-              <Image
-                source={require('..//assets/messi.jpg')}
-                style={styles.profile}
-              />
-            </View>
-            <View style={styles.messageContent}>
-              <Text style={styles.messageTitle}>{item.contact}</Text>
-              <Text style={styles.messageDescription}>{item.lastMessage}</Text>
-            </View>
-            <Text style={styles.messageTime}>{item.lastMessageTime}</Text>
-          </View>
-        )}
+        renderItem={({ item }) => {
+          const lastMessage = getLastMessage(item.messages);
+          return (
+            <TouchableOpacity
+              style={styles.messageContainer}
+              onPress={() =>
+                navigation.navigate('Chat', {
+                  contact: item.contact,
+                  messages: item.messages,
+                })
+              }
+            >
+              <View style={styles.messageIconContainer}>
+                <Image
+                  source={require('../assets/messi.jpg')}
+                  style={styles.profile}
+                />
+              </View>
+              <View style={styles.messageContent}>
+                <Text style={styles.messageTitle}>{item.contact}</Text>
+                <Text style={styles.messageDescription}>
+                  {lastMessage.content}
+                </Text>
+              </View>
+              <Text style={styles.messageTime}>{lastMessage.time}</Text>
+            </TouchableOpacity>
+          );
+        }}
       />
     </View>
   );
@@ -110,15 +158,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ecf0f1',
   },
-  body: {
-    flexDirection: 'row',
+  header: {
+    height: 120,
     alignItems: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+    paddingTop: 45,
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+  },
+  headerBackground: {
+    borderRadius: 12,
+    position: 'absolute',
   },
   logo: {
     width: 50,
     height: 50,
     borderRadius: 10,
     paddingTop: 10,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2980b9',
+    marginLeft: 10,
     marginRight: 'auto',
   },
   profile: {
@@ -127,6 +190,10 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     borderColor: '#4CAF50',
     borderWidth: 2,
+  },
+  body: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   bodyTitle: {
     flex: 1,

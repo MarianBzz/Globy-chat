@@ -8,8 +8,14 @@ export type RootStackParamList = {
   Login: undefined;
   ChatList: undefined;
   Profile: undefined;
-  Chat: { contact: string };
+  Chat: { contact: string; messages: Message[] };
 };
+
+interface Message {
+  sender: string;
+  content: string;
+  time: string;
+}
 
 export type ChatScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
