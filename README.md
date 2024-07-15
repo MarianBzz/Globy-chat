@@ -11,16 +11,21 @@ An iOS or Android emulator, or a physical device with the Expo Go app installed
 
 Installation
 Clone the Repository:
-
-git clone <REPOSITORY_URL>
+```bash
+git clone https://github.com/MarianBzz/Globy-chat.git
 cd repository-name
+```
 
 Install Dependencies:
+```bash
 npm install
+```
 
 Running the App
 Use Expo CLI to start the development server and run the app on your connected device or emulator.
+```bash
 npx expo start
+```
 
 
 
