@@ -4,6 +4,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
   StyleSheet,
   Image,
 } from 'react-native';
@@ -41,49 +43,57 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require('../assets/initial-background.jpg')}
-        style={{ position: 'absolute' }}
-        resizeMode='cover'
-      />
-      <TouchableOpacity onPress={goBack} style={styles.backButton}>
-        <Ionicons name='chevron-back' size={24} color='black' />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
         <Image
-          source={!image ? profileImage : { uri: image }}
-          style={styles.profileImage}
+          source={require('../assets/initial-background.jpg')}
+          style={{ position: 'absolute' }}
+          resizeMode='cover'
         />
-        <Ionicons
-          name='add-circle'
-          size={35}
-          color='green'
-          style={styles.editIcon}
-        />
-      </TouchableOpacity>
-      <View style={styles.profile}>
-        <Text style={[styles.name, styles.bold]}>{profile.name}</Text>
-        <Text style={styles.status}>{profile.status}</Text>
+        <TouchableOpacity onPress={goBack} style={styles.backButton}>
+          <Ionicons name='chevron-back' size={24} color='black' />
+        </TouchableOpacity>
+        <TouchableWithoutFeedback
+          onPress={pickImage}
+          style={styles.imageContainer}
+        >
+          <View style={styles.imageContainer}>
+            <Image
+              source={!image ? profileImage : { uri: image }}
+              style={styles.profileImage}
+            />
+            <Ionicons
+              name='add-circle'
+              size={35}
+              color='green'
+              style={styles.editIcon}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+        <View style={styles.profile}>
+          <Text style={[styles.name, styles.bold]}>{profile.name}</Text>
+          <Text style={styles.status}>{profile.status}</Text>
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.text}>Editar Nombre</Text>
+          <TextInput
+            style={styles.input}
+            value={profile.name}
+            onChangeText={(text) => handleInputChange('name', text)}
+            onBlur={Keyboard.dismiss}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.text}>Editar Estado</Text>
+          <TextInput
+            style={styles.input}
+            value={profile.status}
+            onChangeText={(text) => handleInputChange('status', text)}
+            onBlur={Keyboard.dismiss}
+          />
+        </View>
       </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.text}>Editar Nombre</Text>
-        <TextInput
-          style={styles.input}
-          value={profile.name}
-          onChangeText={(text) => handleInputChange('name', text)}
-          onBlur={() => {}}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.text}>Editar Estado</Text>
-        <TextInput
-          style={styles.input}
-          value={profile.status}
-          onChangeText={(text) => handleInputChange('status', text)}
-        />
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
